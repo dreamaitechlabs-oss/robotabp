@@ -1,0 +1,104 @@
+#define LEFT_SENSOR   D1
+#define CENTER_SENSOR D2
+#define RIGHT_SENSOR  D3
+
+#define ENA D5
+#define IN1 D6
+#define IN2 D7
+
+#define IN3 D8
+#define IN4 D0
+#define ENB D4
+
+int speed = 700;   // ESP8266 PWM: 0–1023
+
+void setup() {
+  pinMode(LEFT_SENSOR, INPUT);
+  pinMode(CENTER_SENSOR, INPUT);
+  pinMode(RIGHT_SENSOR, INPUT);
+
+  pinMode(ENA, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+  pinMode(ENB, OUTPUT);
+}
+
+void forward() {
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+
+  analogWrite(ENA, speed);
+  analogWrite(ENB, speed);
+}
+
+void left() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+
+  analogWrite(ENA, speed);
+  analogWrite(ENB, speed);
+}
+
+void right() {
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+
+  analogWrite(ENA, speed);
+  analogWrite(ENB, speed);
+}
+
+void stopRobot() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+}
+
+void loop() {
+
+  int L = digitalRead(LEFT_SENSOR);
+  int C = digitalRead(CENTER_SENSOR);
+  int R = digitalRead(RIGHT_SENSOR);
+
+  // LOW = black line
+
+  if (L == HIGH && C == LOW && R == HIGH) {
+    forward();
+  }
+
+  else if (L == LOW && C == HIGH && R == HIGH) {
+    left();
+  }
+
+  else if (L == HIGH && C == HIGH && R == LOW) {
+    right();
+  }
+
+  else if (L == LOW && C == LOW && R == HIGH) {
+    left();
+  }
+
+  else if (L == HIGH && C == LOW && R == LOW) {
+    right();
+  }
+
+  else if (L == LOW && C == LOW && R == LOW) {
+    forward();
+  }
+
+  else {
+    stopRobot();
+  }
+}
